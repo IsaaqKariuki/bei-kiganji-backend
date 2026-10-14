@@ -9,6 +9,10 @@ const express = require('express');
 
  // We then tell Express to read JSON that arrives in requests. It helps us read the JSON dta that is sent to us
  app.use(express.json());
+ const cors = require('cors');
+app.use(cors({
+  origin: 'https://isaaqkariuki.github.io'
+}));
 
  const routes = require('./routes');
  app.use('/api', routes); // all routes in routes.js get /api prepended 
