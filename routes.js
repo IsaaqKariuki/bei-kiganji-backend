@@ -76,6 +76,12 @@ router. get('/changes', requireAccess, async (req, res) => {
     }
 });
 
+// GET /api/share-links — list all share links (admin only)
+router.get('/share-links', requireAdmin, async (req, res) => {
+    const [rows] = await db.query('SELECT * FROM share_links ORDER BY created_at DESC');
+    res.json(rows);
+});
+
 
 // ==================================
 // POST / api/products  -> ADDS one product 
@@ -153,6 +159,12 @@ router.delete('/products/:id',requireAdmin, async (req, res) => {
     } catch(err) {
         res.status(500).json({ error: err,message });
     }
+});
+
+// DELETE /api/share-links/:token — revoke a link
+router.delete('/share-links/:token', requireAdmin, async (req, res) => {
+    await db.query('UPDATE share_links SET is_revoked = TRUE WHERE token = ?', [req.params.token]);
+    res.json({ ok: true });
 });
 
 //Restore a soft-delete product
