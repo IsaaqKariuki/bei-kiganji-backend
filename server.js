@@ -15,10 +15,11 @@ app.use(cors({
 }));
 
  const routes = require('./routes');
- app.use('/api', routes); // all routes in routes.js get /api prepended 
+ app.use('/api', router); // all routes in routes.js get /api prepended 
 
  // load the database pool we just created
  const { pool: db, initSchema }= require('./db');
+const router = require('./routes');
 
  //test Route for the database
  app.get('/test-db',async (req, res)=>{
