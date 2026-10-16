@@ -185,7 +185,7 @@ router.post('/products/:id/restore',requireAdmin, async (req, res) => {
 
 // POST /api/products/upload
 // accepts a csv file in a form field called file 
-router.post ('/products/upload',requireAdmin, upload.single('file'), async (req, res) => {
+router.post ('/products/upload', upload.single('file'), requireAdmin, async (req, res) => {
     try {
         if(!req.file) {
             return res.status(400).json({ error: 'No file uploaded. Field name must be "file".'});
@@ -214,7 +214,7 @@ router.post ('/products/upload',requireAdmin, upload.single('file'), async (req,
 });
 
 // CREATE a new share Link
-router.post('/share', requireAdmin, async (req, res) => {
+router.post('/share-links', requireAdmin, async (req, res) => {
     try {
         // Generate a 16 random bytes, convert to hex = 32 characters.
         // Cryptographically random -practically impossible to guess.
