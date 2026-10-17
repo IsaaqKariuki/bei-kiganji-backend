@@ -13,6 +13,8 @@ const express = require('express');
 app.use(cors({
   origin: 'https://isaaqkariuki.github.io'
 }));
+// Serve static frontend assets
+app.use(express.static('public'));
 
  const routes = require('./routes');
  app.use('/api', routes); // all routes in routes.js get /api prepended 
