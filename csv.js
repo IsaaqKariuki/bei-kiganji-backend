@@ -41,9 +41,9 @@ function csvToProducts(text) {
         products.push({
             name: p.name,
             category:   p.category || null,
-            quantity:   parseInt(p.quantity,10) || 0,
-            entry_price:    p.entry_price ? parseFloat(p.entry_price)   : null,
-            retail_price:   p.retail_price  ? parseFloat(p.retail_price)    :null,
+            quantity:   parseInt(String(p.quantity || 0).replace(/,/g, ''), 10) || 0,
+            entry_price:    p.entry_price ? parseFloat(String(p.entry_price).replace(/,/g, '')) : null,
+            retail_price:   p.retail_price ? parseFloat(String(p.retail_price).replace(/,/g, '')) : null,
         });
     }
 

@@ -31,7 +31,7 @@ router.get('/products', requireAccess, async (req, res) => {
                 WHERE is_deleted = FALSE
                     AND (name LIKE ? OR category LIKE ?)
                 ORDER BY name
-                LIMIT 200`
+                LIMIT 200`,
                 [like, like]
             );
         } else {
@@ -54,9 +54,10 @@ router.get('/products', requireAccess, async (req, res) => {
 // The sync endpoint . returns every row that changed after since
 // Includes deleted rows - is_deleted = TRUE travels as a normal change
 // Returns severTime so the phone can save the SERVER's clock , not its own
-router. get('/changes', requireAccess, async (req, res) => {
+router.get('/changes', requireAccess, async (req, res) => {
     try {
-        const since = req.query.since || '1970-01-01 00:00:00';
+        const sinceDate = req.query.since ? new Date(req.query.since) : new Date(0);
+        const sinceParam = isNaN(sinceDate.getTime()) ? new Date(0) : sinceDate;
 
         const [rows] = await db.query(
             `SELECT id, name, category, quantity, entry_price, retail_price,
@@ -64,7 +65,7 @@ router. get('/changes', requireAccess, async (req, res) => {
             FROM products
             WHERE updated_at > ?
             ORDER BY updated_at ASC`,
-            [since]
+            [sinceParam]
         );
         // NOW(3) = current server time with millisecond precision.
         // The phone saves this as its "last synced" bookmark.
@@ -78,8 +79,12 @@ router. get('/changes', requireAccess, async (req, res) => {
 
 // GET /api/share-links — list all share links (admin only)
 router.get('/share-links', requireAdmin, async (req, res) => {
-    const [rows] = await db.query('SELECT * FROM share_links ORDER BY created_at DESC');
-    res.json(rows);
+    try {
+        const [rows] = await db.query('SELECT * FROM share_links ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 
@@ -157,14 +162,18 @@ router.delete('/products/:id',requireAdmin, async (req, res) => {
         res.json({ deleted: true});
 
     } catch(err) {
-        res.status(500).json({ error: err,message });
+        res.status(500).json({ error: err.message });
     }
 });
 
 // DELETE /api/share-links/:token — revoke a link
 router.delete('/share-links/:token', requireAdmin, async (req, res) => {
-    await db.query('UPDATE share_links SET is_revoked = TRUE WHERE token = ?', [req.params.token]);
-    res.json({ ok: true });
+    try {
+        await db.query('UPDATE share_links SET is_revoked = TRUE WHERE token = ?', [req.params.token]);
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 //Restore a soft-delete product
@@ -185,7 +194,7 @@ router.post('/products/:id/restore',requireAdmin, async (req, res) => {
 
 // POST /api/products/upload
 // accepts a csv file in a form field called file 
-router.post ('/products/upload', upload.single('file'), requireAdmin, async (req, res) => {
+router.post('/products/upload', requireAdmin, upload.single('file'), async (req, res) => {
     try {
         if(!req.file) {
             return res.status(400).json({ error: 'No file uploaded. Field name must be "file".'});
@@ -226,27 +235,6 @@ router.post('/share-links', requireAdmin, async (req, res) => {
         res.status(201).json({ token });
     }catch (err) {
         res.status(500).json({ error: err.message });
-    }
-});
-
-// List all share links
-router.get('/share', requireAdmin, async (req,res) => {
-    try {
-        const [rows] = await db.query(
-            'SELECT id, token, label, is_revoked, created_at FROM share_links ORDER BY created_at DESC'
-        );
-        res.json({ links: rows });
-    }catch (err) {
-        res.status(500).json({ error: err.message});
-    }
-});
-// Revoke a share link (blocks that token from working)
-router.delete('/share/:id', requireAdmin,async (req, res) => {
-    try {
-        await db.query('UPDATE share_links SET is_revoked = TRUE WHERE id = ?', [req.params.id]);
-        res.json({ revoked: true });
-    }catch (err) {
-        res.status(500).json({ error: err.message});
     }
 });
 
