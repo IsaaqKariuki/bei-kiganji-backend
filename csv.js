@@ -18,10 +18,15 @@ function csvToProducts(text) {
 
     // first Line is the header row
     // Parse header row and map known headers
-    let header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    // Map headers to internal column names using HEADER_MAP
-    let cols = header.map(h => HEADER_MAP[h] || null);
-
+    // Remove possible UTF-8 BOM from first line
+    if (lines[0].charCodeAt(0) === 0xFEFF) {
+        lines[0] = lines[0].slice(1);
+    }
+    // Determine delimiter (comma or semicolon) based on header line
+    const delimiter = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
+    // Parse header row and map known headers
+    let header = lines[0].split(delimiter).map(h => h.trim().replace(/^"(.*)"$/, '$1').toLowerCase());
+let cols = header.map(h => HEADER_MAP[h] || null);
     // If no explicit 'name' column, try to infer from any header containing the word "name"
     if (!cols.includes('name')) {
         const nameIdx = header.findIndex(h => h.includes('name'));
@@ -29,7 +34,6 @@ function csvToProducts(text) {
             cols[nameIdx] = 'name';
         }
     }
-
     // After inference, ensure a name column exists
     if (!cols.includes('name')) {
         throw new Error('CSV must have a "name" or "product" column.');
@@ -39,9 +43,9 @@ function csvToProducts(text) {
     let skipped = 0;
 
     // Process each data row (skip the header)
-    for (const line of  lines.slice(1)){
-        const values = line.split(',').map(v => v.trim());
-        const p = {};
+    for (const line of lines.slice(1)) {
+    const values = line.split(delimiter).map(v => v.trim().replace(/^"?(.*?)"?$/, '$1'));
+    const p = {};
 
         cols.forEach((col, i) => {
             if (col) p[col] = values[i] || null;
