@@ -77,8 +77,8 @@ router.get('/changes', requireAccess, async (req, res) => {
     }
 });
 
-// GET /api/share-links — list all share links (admin only)
-router.get('/share-links', requireAdmin, async (req, res) => {
+// GET /api/share-links (and /api/share) — list all share links (admin only)
+router.get(['/share-links', '/share'], requireAdmin, async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM share_links ORDER BY created_at DESC');
         res.json(rows);
@@ -166,8 +166,8 @@ router.delete('/products/:id',requireAdmin, async (req, res) => {
     }
 });
 
-// DELETE /api/share-links/:token — revoke a link
-router.delete('/share-links/:token', requireAdmin, async (req, res) => {
+// DELETE /api/share-links/:token (and /api/share/:token) — revoke a link
+router.delete(['/share-links/:token', '/share/:token'], requireAdmin, async (req, res) => {
     try {
         await db.query('UPDATE share_links SET is_revoked = TRUE WHERE token = ?', [req.params.token]);
         res.json({ ok: true });
@@ -222,8 +222,8 @@ router.post('/products/upload', requireAdmin, upload.single('file'), async (req,
     }
 });
 
-// CREATE a new share Link
-router.post('/share-links', requireAdmin, async (req, res) => {
+// CREATE a new share Link (supports both /share-links and /share)
+router.post(['/share-links', '/share'], requireAdmin, async (req, res) => {
     try {
         // Generate a 16 random bytes, convert to hex = 32 characters.
         // Cryptographically random -practically impossible to guess.
