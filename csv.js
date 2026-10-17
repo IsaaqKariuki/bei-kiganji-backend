@@ -17,10 +17,21 @@ function csvToProducts(text) {
     if (lines.length < 2 ) return { products: [], skipped:0};
 
     // first Line is the header row
-    const header = lines[0].split(',').map(h => h.trim() .toLowerCase());
-    const cols = header.map(h => HEADER_MAP[h] || null);
+    // Parse header row and map known headers
+    let header = lines[0].split(',').map(h => h.trim().toLowerCase());
+    // Map headers to internal column names using HEADER_MAP
+    let cols = header.map(h => HEADER_MAP[h] || null);
 
-    if(!cols.includes('name')) {
+    // If no explicit 'name' column, try to infer from any header containing the word "name"
+    if (!cols.includes('name')) {
+        const nameIdx = header.findIndex(h => h.includes('name'));
+        if (nameIdx !== -1) {
+            cols[nameIdx] = 'name';
+        }
+    }
+
+    // After inference, ensure a name column exists
+    if (!cols.includes('name')) {
         throw new Error('CSV must have a "name" or "product" column.');
     }
 
