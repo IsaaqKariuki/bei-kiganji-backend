@@ -26,7 +26,7 @@ router.get('/products', requireAccess, async (req, res) => {
             // unto sql (that could allow sql injection)
             const like = `%${search}%`;
             [rows] = await db.query(
-                `SELECT id, name, category, quantity, entry_price, retail_price, updated_at
+                `SELECT id, name, category, quantity, entry_price, updated_at
                 FROM products
                 WHERE is_deleted = FALSE
                     AND (name LIKE ? OR category LIKE ?)
@@ -36,7 +36,7 @@ router.get('/products', requireAccess, async (req, res) => {
             );
         } else {
             [rows] = await db.query(
-                `SELECT id, name, category, quantity, entry_price, retail_price, updated_at
+                `SELECT id, name, category, quantity, entry_price, updated_at
                 FROM products
                 WHERE is_deleted = FALSE
                 ORDER BY name
@@ -60,7 +60,7 @@ router.get('/changes', requireAccess, async (req, res) => {
         const sinceParam = isNaN(sinceDate.getTime()) ? new Date(0) : sinceDate;
 
         const [rows] = await db.query(
-            `SELECT id, name, category, quantity, entry_price, retail_price,
+            `SELECT id, name, category, quantity, entry_price,
                 is_deleted, updated_at
             FROM products
             WHERE updated_at > ?
@@ -208,10 +208,10 @@ router.post('/products/upload', requireAdmin, upload.single('file'), async (req,
         }
 
         const values = products.map(p => 
-            [p.name, p.category, p.quantity, p.entry_price, p.retail_price]
+            [p.name, p.category, p.quantity, p.entry_price]
         );
         await db.query(
-            'INSERT INTO products (name, category, quantity, entry_price, retail_price) VALUES ?',
+            'INSERT INTO products (name, category, quantity, entry_price) VALUES ?',
             [values]
         );
 

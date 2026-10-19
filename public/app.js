@@ -248,7 +248,7 @@ function renderSearchResults(items, isSearch, query = '') {
                 </div>
             </div>
             <div class="prod-right">
-                <div class="retail-price">${formatPrice(p.entry_price)}</div>
+                <div class="entry-price">${formatPrice(p.entry_price)}</div>
             </div>
         </div>`).join('');
     
@@ -510,7 +510,7 @@ async function saveProductEdit() {
         category: document.getElementById('editCategory').value.trim() || null,
         quantity: parseInt(document.getElementById('editQuantity').value, 10) || 0,
         entry_price: parseFloat(document.getElementById('editEntryPrice').value) || null,
-        retail_price: parseFloat(document.getElementById('editRetailPrice').value) || null,
+        // retail_price: parseFloat(document.getElementById('editRetailPrice').value) || null,
     };
     
     if (!body.name) {

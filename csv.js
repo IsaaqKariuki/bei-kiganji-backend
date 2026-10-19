@@ -6,8 +6,7 @@ const HEADER_MAP = {
     'quantity':'quantity', 'qty':'quantity', 'stock':'quantity',
     'entry price':'entry_price', 'entry_price':'entry_price',
     'buying price':'entry_price', 'cost price':'entry_price', 'cost':'entry_price',
-    'retail price':'retail_price', 'retail_price':'retail_price',
-    'selling price':'retail_price', 'price':'retail_price',
+    
 };
 
 // Converts a CSV string into an Array of product objects
@@ -73,7 +72,7 @@ let cols = header.map(h => HEADER_MAP[h] || null);
             category:   p.category || null,
             quantity:   toNum(p.quantity) ?? 0,
             entry_price:    toNum(p.entry_price) ?? 0,
-            retail_price:   toNum(p.retail_price) ?? 0,
+            // retail_price:   toNum(p.retail_price) ?? 0,
         });
     }
 
