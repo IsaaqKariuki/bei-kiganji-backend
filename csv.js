@@ -12,6 +12,13 @@ const HEADER_MAP = {
 
 // Converts a CSV string into an Array of product objects
 // Returns { products: [...], skipped: N }
+function toNum(val) {
+  if (val == null || val === '') return null;
+  const cleaned = String(val).replace(/,/g, '').trim();
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : n;
+}
+
 function csvToProducts(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2 ) return { products: [], skipped:0};
