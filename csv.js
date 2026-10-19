@@ -69,9 +69,9 @@ let cols = header.map(h => HEADER_MAP[h] || null);
         products.push({
             name: p.name,
             category:   p.category || null,
-            quantity:   parseInt(String(p.quantity || 0).replace(/,/g, ''), 10) || 0,
-            entry_price:    p.entry_price ? parseFloat(String(p.entry_price).replace(/,/g, '')) : null,
-            retail_price:   p.retail_price ? parseFloat(String(p.retail_price).replace(/,/g, '')) : null,
+            quantity:   toNum(p.quantity) ?? 0,
+            entry_price:    toNum(p.entry_price),
+            retail_price:   toNum(p.retail_price),
         });
     }
 
