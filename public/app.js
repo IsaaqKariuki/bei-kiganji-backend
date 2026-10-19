@@ -248,8 +248,8 @@ function renderSearchResults(items, isSearch, query = '') {
                 </div>
             </div>
             <div class="prod-right">
-                <div class="retail-price">Ksh ${num(p.retail_price)}</div>
-                ${isOwner() && p.entry_price != null ? `<div class="cost-price">Cost: Ksh ${num(p.entry_price)}</div>` : ''}
+                <div class="retail-price">${formatPrice(p.retail_price)}</div>
+                ${isOwner() && p.entry_price != null ? `<div class="cost-price">Cost: ${formatPrice(p.entry_price)}</div>` : ''}
             </div>
         </div>`).join('');
     
@@ -304,8 +304,8 @@ async function renderAdminView() {
                 </div>
             </div>
             <div class="prod-right">
-                <div class="retail-price">Ksh ${num(p.retail_price)}</div>
-                ${p.entry_price != null ? `<div class="cost-price">Cost: Ksh ${num(p.entry_price)}</div>` : ''}
+                <div class="retail-price">${formatPrice(p.retail_price)}</div>
+                ${p.entry_price != null ? `<div class="cost-price">Cost: ${formatPrice(p.entry_price)}</div>` : ''}
             </div>
         </div>`).join('');
 }
@@ -748,10 +748,18 @@ function esc(str) {
         .replace(/"/g, '&quot;');
 }
 
-function num(n) {
-    return n == null
-        ? '—'
-        : Number(n).toLocaleString('en-KE', { minimumFractionDigits: 2 });
+function formatPrice(price) {
+    if (price === null || price === undefined || price === "") {
+        return "—";
+    }
+    const value = Number(String(price).replace(/,/g, ""));
+    if (!Number.isFinite(value)) {
+        return "—";
+    }
+    return "KSh " + value.toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
 // ── STARTUP ──
