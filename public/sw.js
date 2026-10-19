@@ -1,7 +1,7 @@
 // Service Worker for Bei Kiganji PWA
 // (Full content copied from original PWA)
 // Versioned cache
-const CACHE = 'bk-v5';
+const CACHE = 'bk-v6';
 const SHELL = [
   './',
   './index.html',
