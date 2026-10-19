@@ -141,7 +141,7 @@ function setSyncBar(msg, status = 'ok') {
 
 function fmtDate(ts) {
     if (!ts || ts === '0') return 'never';
-    return new Date(ts).toLocaleString('en-KE', {
+    return new Date(ts).toLocaleString('en-US', {
         weekday: 'short', day: 'numeric', month: 'short',
         hour: '2-digit', minute: '2-digit'
     });
@@ -747,14 +747,14 @@ function esc(str) {
 }
 
 function formatPrice(price) {
-    if (price === null || price === undefined || price === "") {
+    if (price === null || price === undefined || price === '' || price === 'null') {
         return "—";
     }
-    const value = Number(String(price).replace(/,/g, ""));
-    if (!Number.isFinite(value)) {
+    const value = Number(String(price).replace(/,/g, ''));
+    if (!Number.isFinite(value) || value === 0 && price !== 0) {
         return "—";
     }
-    return "KSh " + value.toLocaleString("en-KE", {
+    return "KSh " + value.toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
