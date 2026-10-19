@@ -51,10 +51,12 @@ let cols = header.map(h => HEADER_MAP[h] || null);
 
     // Process each data row (skip the header)
     for (const line of lines.slice(1)) {
-    const values = line.split(delimiter).map(v => { 
+    // Split on the delimiter but ignore commas inside quoted fields
+    const values = line.split(new RegExp(`\\${delimiter}(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)`)).map(v => {
         v = v.trim();
-        if (v.startsWith('"') && v.endsWith('"')){
-            v= v.slice(1, -1);
+        // Remove surrounding quotes if present
+        if (v.startsWith('"') && v.endsWith('"')) {
+            v = v.slice(1, -1);
         }
         return v;
     });
@@ -70,8 +72,8 @@ let cols = header.map(h => HEADER_MAP[h] || null);
             name: p.name,
             category:   p.category || null,
             quantity:   toNum(p.quantity) ?? 0,
-            entry_price:    toNum(p.entry_price),
-            retail_price:   toNum(p.retail_price),
+            entry_price:    toNum(p.entry_price) ?? 0,
+            retail_price:   toNum(p.retail_price) ?? 0,
         });
     }
 
