@@ -248,8 +248,7 @@ function renderSearchResults(items, isSearch, query = '') {
                 </div>
             </div>
             <div class="prod-right">
-                <div class="retail-price">${formatPrice(p.retail_price)}</div>
-                ${isOwner() && p.entry_price != null ? `<div class="cost-price">Cost: ${formatPrice(p.entry_price)}</div>` : ''}
+                <div class="retail-price">${formatPrice(p.entry_price)}</div>
             </div>
         </div>`).join('');
     
@@ -304,8 +303,7 @@ async function renderAdminView() {
                 </div>
             </div>
             <div class="prod-right">
-                <div class="retail-price">${formatPrice(p.retail_price)}</div>
-                ${p.entry_price != null ? `<div class="cost-price">Cost: ${formatPrice(p.entry_price)}</div>` : ''}
+                <div class="retail-price">${formatPrice(p.entry_price)}</div>
             </div>
         </div>`).join('');
 }
