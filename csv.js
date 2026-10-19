@@ -51,7 +51,12 @@ let cols = header.map(h => HEADER_MAP[h] || null);
 
     // Process each data row (skip the header)
     for (const line of lines.slice(1)) {
-    const values = line.split(delimiter).map(v => v.trim().replace(/^"?(.*?)"?$/, '$1'));
+    const values = line.split(delimiter).map(v =>{ v.trim();
+        if (v.startWith('"') && v.endsWith('"')){
+            v= v.slice(1, -1);
+        }
+        return v;
+    });
     const p = {};
 
         cols.forEach((col, i) => {
